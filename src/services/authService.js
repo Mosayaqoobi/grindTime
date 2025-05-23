@@ -1,0 +1,1 @@
+//Handles user authentication with Supabase
