@@ -1,39 +1,43 @@
-//Handles user authentication with Supabase
-import supabase from '/supabase.js';
+// Handles user authentication with Supabase
+import supabase from './supabase';
 
-//function to sign up a new user
-export function SignUp(email, password, username) {
-    return supabase.auth.signUp({   //creates a new user
-        email: email, 
-        password: password
-    }).then(function(result) {  //plug the result into the function
-        if (result.error) { 
-            return { error: result.error };   //return error message if sign up failed
-        }
-        var user = result.data.user;    //if sign up was successful, get the user
-        if (user) { 
-            return supabase
-            .from('profiles')
-            .insert([{id: user.id, username: username }])
-            .then(function(profileResult) {
-                return { data: user, error: profileResult.error };
-            });
-        }
-        else {
-            return { error: {message: "no User returned from signup"}};
-        }
+//sign up a new user
+export async function SignUp(email, password) {
+    return await supabase.auth.signUp({
+        email, password
     });
 }
 
-//function to sign in an existing user
-export function login(email, password) {
-    return supabase.auth.signInWithPassword({
-        email: email, 
-        password: password});
+// sign in a current user
+export async function Login(email, password) {
+  const {data, error } = await supabase.auth.signInWithPassword({
+    email, 
+    password
+  });
+  return {data, error};
 }
 
-export function logOut() {
-    return supabase.auth.signOut();
+//log out the current user
+export async function logOut() {
+  return await supabase.auth.signOut();
 }
+//set username 
 
+export async function setUsername(username) {
+    // checks if the username already exists
+    const {data: existingUser} = await supabase 
+    .from("profiles")
+    .select("*")
+    .eq("username", username)
+    .maybeSingle(); //a single row or null if none exists
 
+    if (existingUser) {
+        return {error: {message: "username already exists"} };
+    }
+    //calls upsert which updates or inserts a new profile if it exists or not
+    const {error} = await supabase  
+    .from("profiles")
+    .upsert([{id: useRevalidator, username}]);
+
+    return {error};
+}
