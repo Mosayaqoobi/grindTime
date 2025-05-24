@@ -1,26 +1,26 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { SignUp } from "../services/authService";
 import "../styles/SignUp.css";
 
-
 export default function SignUpPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError]       = useState("");
   const [showMessage, setShowMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]   = useState(false);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
+    setError("");
     const { error } = await SignUp(email, password);
     if (error) {
       setError(error.message);
       setShowMessage("");
     } else {
-      setError("");
       setShowMessage("Check your email for a confirmation link to complete registration.");
+      setEmail("");
+      setPassword("");
     }
     setLoading(false);
   };
@@ -30,7 +30,6 @@ export default function SignUpPage() {
       <div className="signup-card">
         <h1>Create an account</h1>
         <p>Sign up to get started with our service</p>
-
         <form onSubmit={handleSubmit} className="signup-form">
           <label>
             Email Address
@@ -42,7 +41,6 @@ export default function SignUpPage() {
               required
             />
           </label>
-
           <label>
             Password
             <input
@@ -53,15 +51,12 @@ export default function SignUpPage() {
               required
             />
           </label>
-
           {error && <div className="error">{error}</div>}
           {showMessage && <div className="success">{showMessage}</div>}
-
           <button type="submit" disabled={loading}>
             {loading ? "Signing up…" : "Sign Up"}
           </button>
         </form>
-
         <p className="footer">
           Already have an account? <a href="/login">Sign in</a>
         </p>

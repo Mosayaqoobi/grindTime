@@ -1,43 +1,24 @@
-// Handles user authentication with Supabase
 import supabase from './supabase';
 
-//sign up a new user
+// Sign up a new user and insert username into profiles table
 export async function SignUp(email, password) {
-    return await supabase.auth.signUp({
-        email, password
-    });
+  // 1. Register user
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) return { error };
+
+  // 2. If email confirmation is required, data.user may be null. Tell user to check their email.
+  const user = data.user;
+  if (!user) return { error: { message: "Check your email to confirm registration before logging in." } };
+  return { data: user, error: null };
 }
 
-// sign in a current user
+// Log in
 export async function Login(email, password) {
-  const {data, error } = await supabase.auth.signInWithPassword({
-    email, 
-    password
-  });
-  return {data, error};
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { data, error };
 }
 
-//log out the current user
+// Log out
 export async function logOut() {
   return await supabase.auth.signOut();
-}
-//set username 
-
-export async function setUsername(username) {
-    // checks if the username already exists
-    const {data: existingUser} = await supabase 
-    .from("profiles")
-    .select("*")
-    .eq("username", username)
-    .maybeSingle(); //a single row or null if none exists
-
-    if (existingUser) {
-        return {error: {message: "username already exists"} };
-    }
-    //calls upsert which updates or inserts a new profile if it exists or not
-    const {error} = await supabase  
-    .from("profiles")
-    .upsert([{id: useRevalidator, username}]);
-
-    return {error};
 }

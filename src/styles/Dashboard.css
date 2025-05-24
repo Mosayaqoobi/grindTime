@@ -1,0 +1,35 @@
+.dashboard {
+    min-height: 100vh;
+    background: #171717;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dashboard-header {
+    padding: 2rem;
+    background: #212121;
+    text-align: center;
+  }
+  
+  .dashboard-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  
+  .timer-section, .groups-section, .leaderboard-section, .actions-section {
+    background: #23272f;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  
+  .actions-section {
+    grid-column: span 2;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
