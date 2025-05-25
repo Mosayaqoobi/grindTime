@@ -1,19 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { logOut } from "../services/authService";
 import "../styles/Dashboard.css";
+import supabase from "../services/supabase";
 
 
 export default function Dashboard() {
+  const [username, setUsername] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchUsername() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/Login");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single(); // assumes there will always be one row
+
+      setUsername(profile.username);
+    }
+    fetchUsername();
+  }, [navigate]);
+
   async function handleLogout() {
     await logOut();
     navigate("/Login");
   }
+
+  async function handleSettings() {
+    navigate("/Setting");
+  }
+
+
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Welcome!</h1>
+        <h1>Welcome {username}!</h1>
         <p>“Keep Grinding!”</p>
       </header>
       <main className="dashboard-main">
@@ -43,6 +70,7 @@ export default function Dashboard() {
           <button>View Statistics</button>
           <button>Edit Profile</button>
           <button type="button" onClick={handleLogout}>Logout</button>
+          <button type="settings" onClick={handleSettings}>Settings</button>
         </section>
       </main>
     </div>
