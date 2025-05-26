@@ -7,26 +7,26 @@ import { useNavigate } from "react-router-dom";
 export default function SettingsPage() {
   const navigate = useNavigate();
 
-  // USERNAME STATES
+  //username states
   const [currentUsername, setCurrentUsername] = useState("");
   const [username, setUsernameInput] = useState("");
   const [buttonText, setButtonText] = useState("Update Username");
   const [usernameLoading, setUsernameLoading] = useState(false);
 
-  // PASSWORD STATES
+  //password states
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // EMAIL STATE (for password change)
+  //email states
   const [email, setEmail] = useState("");
 
-  // LOADING ON MOUNT
+  //loading states
   const [loading, setLoading] = useState(true);
 
-  // Load username and email when page mounts
+  //load email and username first
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -43,8 +43,9 @@ export default function SettingsPage() {
     fetchData();
   }, []);
 
-  // HANDLERS
+  //________________ all the handles ________________
 
+    //handles users changing their username
   async function handleUsernameChange(e) {
     e.preventDefault();
     if (usernameLoading) return;
@@ -66,6 +67,7 @@ export default function SettingsPage() {
     setUsernameLoading(false);
   }
 
+  //handles users changing their password
   async function handlePasswordChange(e) {
     e.preventDefault();
     if (passwordLoading) return;
@@ -85,11 +87,12 @@ export default function SettingsPage() {
     setPasswordLoading(false);
   }
 
+  //handles users going back to dashboard
   function handleDashboard() {
     navigate("/dashboard");
   }
 
-  // UI
+  // the ui of the page
 
   if (loading) {
     return (
@@ -106,7 +109,7 @@ export default function SettingsPage() {
       <div className="settings-container">
         <h1 className="settings-title">Settings</h1>
 
-        {/* Profile Picture (Not implemented) */}
+        {/* changing profile picture */}
         <section className="settings-section">
           <div className="profile-pic-area">
             <div className="profile-pic">
@@ -129,7 +132,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Change Username */}
+        {/* change username */}
         <section className="settings-section">
           <h2 className="section-title">Change Username</h2>
           <label className="input-label" htmlFor="username">New Username</label>
@@ -153,7 +156,7 @@ export default function SettingsPage() {
           </button>
         </section>
 
-        {/* Change Password */}
+        {/* change password */}
         <section className="settings-section">
           <h2 className="section-title">Change Password</h2>
           <div className="input-group">
@@ -170,11 +173,10 @@ export default function SettingsPage() {
               />
               <button
                 type="button"
-                className="eye-btn"
+                className="eye-btn icon-left"
                 onClick={() => setShowCurrent(s => !s)}
                 aria-label={showCurrent ? "Hide password" : "Show password"}
               >
-                {showCurrent ? "🙈" : "👁️"}
               </button>
             </div>
           </div>
@@ -192,11 +194,10 @@ export default function SettingsPage() {
               />
               <button
                 type="button"
-                className="eye-btn"
+                className="eye-btn icon-left"
                 onClick={() => setShowNew(s => !s)}
                 aria-label={showNew ? "Hide password" : "Show password"}
               >
-                {showNew ? "🙈" : "👁️"}
               </button>
             </div>
           </div>

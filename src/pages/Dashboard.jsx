@@ -1,28 +1,33 @@
+// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Home, Calendar, Users, Library, Settings, Power } from "lucide-react";
+import supabase from "../services/supabase";
 import { logOut } from "../services/authService";
 import "../styles/Dashboard.css";
-import supabase from "../services/supabase";
-
 
 export default function Dashboard() {
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading]   = useState(true);
+  const navigate                = useNavigate();
 
   useEffect(() => {
     async function fetchUsername() {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
-        navigate("/Login");
+        navigate("/login");
         return;
       }
+
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .single(); // assumes there will always be one row
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
 
       setUsername(profile.username);
       setLoading(false);
@@ -32,59 +37,98 @@ export default function Dashboard() {
 
   async function handleLogout() {
     await logOut();
-    navigate("/Login");
+    navigate("/login");
   }
 
-  async function handleSettings() {
-    navigate("/Setting");
+  function handleSettings() {
+    navigate("/setting");
   }
 
-
-  if (loading) {  //while loading the username
+  if (loading) {
     return (
-      <div className="settings-bg">
-        <div className="settings-container">
-          <h2>Loading...</h2>
-        </div>
-      </div>
+      <main className="dashboard-main">
+        <h2>Loading…</h2>
+      </main>
     );
-  };
+  }
 
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>Welcome {username}!</h1>
-        <p>“Keep Grinding!”</p>
-      </header>
+      <aside className="sidebar">
+        <div className="profile-info">
+          <img
+            src="https://via.placeholder.com/40"
+            alt="avatar"
+            className="sidebar-avatar"
+          />
+          <p className="sidebar-greeting">Hi, {username}</p>
+        </div>
+
+        <NavLink to="/dashboard" end className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" } > <Home size={20} className="sidebar-icon" /> <span>Home</span> </NavLink>
+        {/* Only include this if you have a /calendar route */}
+        <NavLink to="/calendar" className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" } > <Calendar size={20} className="sidebar-icon" /> <span>Calendar</span> </NavLink>
+        <NavLink to="/study-groups" className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" } ><Users size={20} className="sidebar-icon" /> <span>Study Groups</span> </NavLink>
+        <NavLink to="/classes"className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" }> <Library size={20} className="sidebar-icon" /> <span>Classes</span> </NavLink>
+
+
+        <button className="sidebar-btn" onClick={handleSettings} type="button"> <Settings size={20} className="sidebar-icon" /> <span>Settings</span></button> 
+        <button className="sidebar-btn" onClick={handleLogout} type="button"> <Power size={20} className="sidebar-icon" /><span>Logout</span></button>
+      </aside>
+
       <main className="dashboard-main">
-        <section className="timer-section">
-          <h2>Study Timer</h2>
-          <button>Start</button>
-          <button>Stop</button>
-          <div>Today: 2h 15m | Weekly: 8h 40m</div>
+        <h1 className="dashboard-title">Dashboard</h1>
+
+        <h2 className="section-title">Classes</h2>
+        <section className="classes">
+          <div className="class-card">
+            <img
+              src="https://via.placeholder.com/200x120"
+              alt="Sample Class"
+              className="class-img"
+            />
+            <h3 className="class-title">Calculus 101</h3>
+            <p className="class-subtitle">Prof. Emily Carter</p>
+          </div>
+          <div className="class-card">
+            <img
+              src="https://via.placeholder.com/200x120"
+              alt="Sample Class"
+              className="class-img"
+            />
+            <h3 className="class-title">Physics 202</h3>
+            <p className="class-subtitle">Dr. Jane Doe</p>
+          </div>
         </section>
-        <section className="groups-section">
-          <h2>Your Groups</h2>
-          <ul>
-            <li>Study Buddies (4 members) <button>Chat</button></li>
-            <li>Math 101 Club (8 members) <button>Chat</button></li>
-            <li><button>+ Create/Join New Group</button></li>
-          </ul>
+
+        <h2 className="section-title">Study Stats</h2>
+        <section className="stats">
+          <div className="stat-card">
+            <h3 className="stat-title">Today</h3>
+            <p className="stat-number">3 hours</p>
+          </div>
+          <div className="stat-card">
+            <h3 className="stat-title">Weekly</h3>
+            <p className="stat-number">8 h 40 m</p>
+          </div>
         </section>
-        <section className="leaderboard-section">
-          <h2>Leaderboard (Today)</h2>
-          <ol>
-            <li>Alice – 3h 10m</li>
-            <li>Bob – 2h 40m</li>
-            <li>You – 2h 15m</li>
-          </ol>
+
+        <h2 className="section-title">Study Groups</h2>
+        <section className="study-groups">
+          <div className="group-card">
+            <img
+              src="https://via.placeholder.com/240x140"
+              alt="Sample Group"
+              className="group-img"
+            />
+            <h3 className="group-title">Math 101 Club</h3>
+            <p className="group-subtitle">8 members</p>
+          </div>
         </section>
-        <section className="actions-section">
-          <button>View Statistics</button>
-          <button type="button" onClick={handleLogout}>Logout</button>
-          <button type="settings" onClick={handleSettings}>Settings</button>
+
+        <section className="join-group">
+          <button className="action-btn">Join a Study Group</button>
         </section>
       </main>
     </div>
   );
-};
+}
