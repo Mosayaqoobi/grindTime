@@ -113,9 +113,15 @@ export async function getCurrentUsername() {
   return { username: profile?.username || null };
 }
 //handles updating users password
-export async function updatePassword(newPassword) {
+export async function updatePassword(currentPassword, newPassword, email) {
+  // Re-authenticate
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  });
+  if (loginError) return { error: { message: "Current password is incorrect." } };
 
-  const { data, error } = await supabase.auth.updateUser({password: newPassword});
-  return { data, error };
-
+  // Update password
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  return { error };
 }
