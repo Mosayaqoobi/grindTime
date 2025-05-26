@@ -76,21 +76,23 @@ export async function setUsername(username) {
     return { error: { message: "Not logged in" } };
   }
 
-  // 2. Check for duplicate username
+  // 2. Check for duplicate username (optional, but good)
   const { data: existingUser } = await supabase
     .from('profiles')
     .select('id')
     .eq('username', username)
     .maybeSingle();
 
+  // If a user with this username exists and is not THIS user
   if (existingUser && existingUser.id !== user.id) {
     return { error: { message: "Username is already taken." } };
   }
 
-  // 3. Upsert (insert or update) the profile
+  // 3. Update the username for the current user's row
   const { error } = await supabase
     .from('profiles')
-    .upsert([{ id: user.id, username }]);
+    .update({ username })
+    .eq('id', user.id);
 
   return { error };
 }
@@ -109,4 +111,11 @@ export async function getCurrentUsername() {
 
   if (error) return { error: error.message || "Could not fetch username" };
   return { username: profile?.username || null };
+}
+//handles updating users password
+export async function updatePassword(newPassword) {
+
+  const { data, error } = await supabase.auth.updateUser({password: newPassword});
+  return { data, error };
+
 }

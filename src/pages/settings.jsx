@@ -2,40 +2,78 @@ import React, { useEffect, useState } from "react";
 import "../styles/settings.css"; // Make sure this path matches your project
 import { setUsername, getCurrentUsername } from "../services/authService";
 import supabase from "../services/supabase";
+import { useNavigate } from "react-router-dom";
+import { updatePassword } from "../services/authService";
 
 export default function SettingsPage() {
-    const [currentUsername, setCurrentUsername] = useState(""); //stored in the db
-    const [username, setUsername] = useState("");   //for editing 
+    const navigate = useNavigate();
+    const [currentUsername, setCurrentUsername] = useState("");
+    const [username, setUsernameInput] = useState("");
+    const [buttonText, setButtonText] = useState("Update Username");
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [usernameLoading, setUsernameLoading] = useState(false);
+    const [passwordLoading, setPasswordLoading] = useState(false);
 
   async function handleImageChange(e) {
     // handle image upload logic
   }
   async function handleUsernameChange(e) {
-    // handle username change logic
     e.preventDefault();
-    if (!username.trim()) return;
+
+    if (usernameLoading) {  //avoid duplicated clicks
+        return;
+    }
+
+    if (!username.trim()) { //dont allow button press if input empty
+        return;
+    }
+
+    setButtonText("Updating...");
+    setUsernameLoading(true);
+
     const { error } = await setUsername(username.trim());
+
     if (error) {
         alert(error.message || "Could not update username.");
+        setButtonText("Update Username");
     } else {
-        alert("Username updated!");
-        setUsername(""); // Optionally clear field
+        setCurrentUsername(username.trim());
+        setUsernameInput(""); // Optionally clear field
+        setButtonText("Updated!");
+        setTimeout(() => setButtonText("Update Username"), 5000);
     }
-  }
-    async function handlePasswordChange() {
+
+    setUsernameLoading(false);
+}
+    async function handlePasswordChange(e) {
         // handle password change logic
+        e.preventDefault();
+        if (!newPassword) return;
+
+        setPasswordLoading(true);
+        const { error }  = await updatePassword(newPassword);
+        setPasswordLoading(false);
+
+        if (error) {
+          alert(error.message || "Could not update password.");
+        }
+        else {
+          setCurrentPassword("");
+          setNewPassword("");
+        }
+
+
     }
 
     useEffect(() => {
         async function fetchUsername() {
+            setLoading(true);
           const { username } = await getCurrentUsername();
           if (username) {
-            setLoading(true);
             setCurrentUsername(username); //what's in DB
             setUsername(username);        //pre-fill the input
             setLoading(false);
@@ -44,8 +82,23 @@ export default function SettingsPage() {
         fetchUsername();
       }, []);
 
+      function handleDashboard() {
+        navigate("/dashboard");
+      }
 
+      if (loading) {    //while loading the username so it doesnt look fonky
+        return (
+          <div className="settings-bg">
+            <div className="settings-container">
+              <h2>Loading...</h2>
+            </div>
+          </div>
+        );
+      };
+
+      //once loading the username is done
   return (
+
     <div className="settings-bg">
       <div className="settings-container">
         <h1 className="settings-title">Settings</h1>
@@ -81,12 +134,18 @@ export default function SettingsPage() {
             id="username"
             className="settings-input"
             type="text"
-            placeholder={currentUsername ? `Current: ${currentUsername}` : "Enter new username"}
+            placeholder={currentUsername ? `${currentUsername}` : "Enter new username"}
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={e => setUsernameInput(e.target.value)}
           />
-          <button className="settings-btn" style={{ marginTop: 16 }} onClick={handleUsernameChange}>
-            Update Username
+          <button
+            className="settings-btn"
+            style={{ marginTop: 16 }}
+            onClick={handleUsernameChange}
+            type="button"
+            disabled={usernameLoading}
+          >
+            {buttonText}
           </button>
         </section>
 
@@ -139,7 +198,12 @@ export default function SettingsPage() {
             Update Password
           </button>
         </section>
+        <button
+        className="settings-btn done-btn"
+        style={{ marginTop: 32, width: "100%" }}
+        type="button"
+        onClick={handleDashboard}>done</button>
       </div>
     </div>
   );
-}
+};

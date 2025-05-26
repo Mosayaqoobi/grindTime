@@ -7,10 +7,12 @@ import supabase from "../services/supabase";
 
 export default function Dashboard() {
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUsername() {
+      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate("/Login");
@@ -23,6 +25,7 @@ export default function Dashboard() {
         .single(); // assumes there will always be one row
 
       setUsername(profile.username);
+      setLoading(false);
     }
     fetchUsername();
   }, [navigate]);
@@ -36,6 +39,16 @@ export default function Dashboard() {
     navigate("/Setting");
   }
 
+
+  if (loading) {  //while loading the username
+    return (
+      <div className="settings-bg">
+        <div className="settings-container">
+          <h2>Loading...</h2>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="dashboard">
@@ -68,11 +81,10 @@ export default function Dashboard() {
         </section>
         <section className="actions-section">
           <button>View Statistics</button>
-          <button>Edit Profile</button>
           <button type="button" onClick={handleLogout}>Logout</button>
           <button type="settings" onClick={handleSettings}>Settings</button>
         </section>
       </main>
     </div>
   );
-}
+};
