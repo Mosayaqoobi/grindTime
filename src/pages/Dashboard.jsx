@@ -110,6 +110,10 @@ export default function Dashboard() {
             <h3 className="stat-title">Weekly</h3>
             <p className="stat-number">8 h 40 m</p>
           </div>
+          <div className="stat-card">
+            <h3 className="stat-title">Average</h3>
+            <p className="stat-number">88%</p>
+          </div>
         </section>
 
         <h2 className="section-title">Study Groups</h2>
