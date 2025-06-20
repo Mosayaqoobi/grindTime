@@ -1,0 +1,68 @@
+/* CreateClass.css */
+
+.create-class-page {
+    background-color: #12131e;
+    color: #ececec;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  
+  .create-class-page h1 {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+  
+  .create-class-form {
+    max-width: 600px;
+    width: 100%;
+  }
+  
+  .create-class-form label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  
+  .create-class-form input,
+  .create-class-form textarea,
+  .create-class-form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #1b1d2a;
+    color: #ececec;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .create-class-form input::placeholder,
+  .create-class-form textarea::placeholder {
+    color: #555;
+  }
+  
+  .create-class-form input:focus,
+  .create-class-form textarea:focus,
+  .create-class-form select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.5);
+  }
+  
+  .submit-btn {
+    background-color: #646cff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .submit-btn:hover {
+    background-color: #535bf2;
+  }

@@ -5,6 +5,7 @@ import { Home, Calendar, Users, Library, Settings, Power } from "lucide-react";
 import supabase from "../services/supabase";
 import { logOut } from "../services/authService";
 import "../styles/Dashboard.css";
+import CreateClass from "../pages/ClassCustomization";
 
 export default function Dashboard() {
   const [username, setUsername] = useState("");
@@ -43,6 +44,9 @@ export default function Dashboard() {
   function handleSettings() {
     navigate("/setting");
   }
+  function handleCreateClass() {
+    navigate("/CreateClass");
+  }
 
   if (loading) {
     return (
@@ -68,7 +72,7 @@ export default function Dashboard() {
         {/* Only include this if you have a /calendar route */}
         <NavLink to="/calendar" className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" } > <Calendar size={20} className="sidebar-icon" /> <span>Calendar</span> </NavLink>
         <NavLink to="/study-groups" className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" } ><Users size={20} className="sidebar-icon" /> <span>Study Groups</span> </NavLink>
-        <NavLink to="/classes"className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" }> <Library size={20} className="sidebar-icon" /> <span>Classes</span> </NavLink>
+        <NavLink to="/CreateClass" className={({ isActive }) => isActive ? "sidebar-btn active" : "sidebar-btn" }> <Library size={20} className="sidebar-icon" /> <span>Classes</span> </NavLink>
 
 
         <button className="sidebar-btn" onClick={handleSettings} type="button"> <Settings size={20} className="sidebar-icon" /> <span>Settings</span></button> 

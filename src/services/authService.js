@@ -27,7 +27,6 @@ export async function SignUp(email, password) {
         message: "Check your email to confirm registration before logging in.",
       },
     };
-
   // Username will be added on first login (see Login)
   return { data: user, error: null };
 }
